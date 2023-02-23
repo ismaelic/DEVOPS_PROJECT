@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Promote_User_Story_QC_validation</fullName>
+    <active>false</active>
+    <description>If User Story is using Quality Gates from Quality Clouds, the Quality Gates results should be PASSED or be APROVED by Peer Review</description>
+    <errorConditionFormula>AND(
+				OR(
+								AND(
+												PRIORVALUE(copado__Promote_Change__c) = false,
+												copado__Promote_Change__c = true
+								),
+								AND(
+												PRIORVALUE(copado__Promote_and_Deploy__c) = false,
+												copado__Promote_and_Deploy__c = true
+								)
+				),
+				copado__Latest_Commit_Date__c &lt;&gt; NULL,
+			 NOT(ISBLANK(copado__Latest_Commit_Date__c) ),
+				
+				NOT(ISPICKVAL(Peer_Review__c, &apos;Peer Review Approved&apos;)),
+				ISPICKVAL(Quality_Gates_Result__c, &quot;NOT PASSED&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Quality_Gates_Result__c</errorDisplayField>
+    <errorMessage>This User Story does not meet the required QC Quality Gates threshold to be promoted.</errorMessage>
+</ValidationRule>
